@@ -9,4 +9,4 @@
 
 
 
-bool load_bin(const uint8_t *mem,const char *filen);
+bool load_bin(uint8_t *mem,const char *filen);

@@ -1,5 +1,5 @@
 #include "memory.h"
-bool load_bin(const uint8_t *mem, const char *filen){
+bool load_bin(uint8_t *mem, const char *filen){
 
 	FILE *file = fopen(filen,"rb");
 	if(file == NULL) {
@@ -17,6 +17,7 @@ bool load_bin(const uint8_t *mem, const char *filen){
 	}
 	fread(mem,1,fileSize,file);
 	fclose(file);
+	printf("load_bin executed \n");
 	return 0;
 
 
