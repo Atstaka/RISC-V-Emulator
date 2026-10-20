@@ -61,15 +61,16 @@ void execute(cpu *cpu, uint32_t instr){
 //
 void cpu_loop(cpu *cpu){
 	printf("hey \n");
-	bool loop = 1;
-	while(loop){
+	while(true){
 		uint32_t instr =fetch(cpu);
+		// stops on file end
+		if (instr == 0) break;
 		printf("fetched \n");
 		execute(cpu,instr);
 		printf("executed \n");
 		cpu->pc += 0x4;
 		printf("pc + 4 \n");
-		loop = 0;
+
 	}
 
 }
