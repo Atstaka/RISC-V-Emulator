@@ -2,6 +2,7 @@ cat << 'EOF' > .gitignore
 *.o
 *.bin
 *.elf
+*.s
 *.txt
 emu
 riscv
