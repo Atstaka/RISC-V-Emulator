@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include"arithutils.h"
+
 
 //
 //initializing the cpu at pc =0
@@ -10,18 +10,13 @@
 void initializeCpu(cpu *cp){
 	memset(cp,0, sizeof(*cp));
 	printf("memset successful \n");
-	cp->regist[2] = MEM_SIZE;
-
-	cp->pc = 0x00000000;
+	cp->regist[2] = MEM_SIZE+ DRAM_BASE;
+	cp->pc = DRAM_BASE;
 }
 
 //Fetches instructions
 uint32_t fetch(cpu *cpu){
-	uint32_t instr= (cpu->memory[cpu->pc]
-
-            | ((cpu->memory[cpu->pc + 1]) << 8)
-            | ((cpu->memory[cpu->pc + 2]) << 16)
-            | ((cpu->memory[cpu->pc + 3]) << 24));
+	uint32_t instr= load_bus(&cpu->bus,cpu->pc,32);
 	printf ("instruction: %b\n", instr);
 	printf("inst but hex 0x%08X\n", instr);
 	return instr;
@@ -41,19 +36,20 @@ void execute(cpu *cpu, uint32_t instr){
 		//addi
 		case(0x13):{
 				printf("addi\n");
-				int32_t imm = ((int32_t)instr >>20);
-				cpu->regist[rd] =wrapping_add(cpu->regist[rs1],imm);
+				int64_t imm =(int64_t) ((int32_t)instr >>20);
+				cpu->regist[rd] =(cpu->regist[rs1] + (int64_t) imm);
 				printf("this \n");
 			   	break;
 			   }
 		case(0x33):{
-				cpu->regist[rd] = wrapping_add(cpu->regist[rs1],cpu->regist[rs2]);
+				cpu->regist[rd] = (cpu->regist[rs1] +cpu->regist[rs2]);
 				break;
 			   }
 
 				
 
 	}
+	cpu->regist[0] = 0;
 }
 
 //
@@ -64,11 +60,11 @@ void cpu_loop(cpu *cpu){
 	while(true){
 		uint32_t instr =fetch(cpu);
 		// stops on file end
-		if (instr == 0) break;
+		if (instr == 0 || cpu->pc ==0) break;
 		printf("fetched \n");
 		execute(cpu,instr);
-		printf("executed \n");
 		cpu->pc += 0x4;
+		printf("executed \n");
 		printf("pc + 4 \n");
 
 	}
